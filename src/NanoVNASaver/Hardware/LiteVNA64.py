@@ -197,6 +197,7 @@ class LiteVNA64(NanoVNA_V2):
     def is_lite_vna_64(serial: Serial) -> bool:
         hw_version = LiteVNA64._get_hw_revision_serial(serial)
         fw_version = LiteVNA64._get_fw_revision_serial(serial)
+        logger.debug(f"Hardware version ({hw_version}): {hw_version}, FW version: {fw_version}")
         return (
             hw_version == EXPECTED_HW_VERSION
             and fw_version == EXPECTED_FW_VERSION

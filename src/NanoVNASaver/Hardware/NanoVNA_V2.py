@@ -121,7 +121,22 @@ class NanoVNA_V2(VNA):
         # TODO: more than one dp per freq
         self.features.add("Multi data points")
         self.board_revision = self.read_board_revision()
-        if self.board_revision >= Version.parse("2.0.4"):
+        logger.debug("Board revision: %s", self.board_revision)
+        if self.board_revision >= Version.parse("2.0.50"):
+            self.sweep_max_freq_hz = 6000e6
+            self.valid_datapoints: tuple[int, ...] = (
+                101,
+                11,
+                51,
+                201,
+                301,
+                501,
+                1021,
+                4096,
+            )
+            self.screenwidth = 480
+            self.screenheight = 320
+        elif self.board_revision >= Version.parse("2.0.4"):
             self.sweep_max_freq_hz = 4400e6
         else:
             self.sweep_max_freq_hz = 3000e6
@@ -251,9 +266,11 @@ class NanoVNA_V2(VNA):
             sleep(2.0)  # could fix bug #585 but shoud be done
             # in a more predictive way
             resp = self.serial.read(2)
+            logger.debug(f"resp 2: {resp[0]},{resp[1]}")
         if len(resp) != 2:
             logger.error("Timeout reading version registers. Got: %s", resp)
             raise IOError("Timeout reading version registers")
+        logger.debug(f"resp 3: {resp[0]},{resp[1]}")
         return Version.build(resp[0], 0, resp[1])
 
     def read_fw_version(self) -> Version:

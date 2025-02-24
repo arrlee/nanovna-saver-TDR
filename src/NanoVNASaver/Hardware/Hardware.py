@@ -87,6 +87,7 @@ def _fix_v2_hwinfo(dev):
 
 
 def usb_typename(device: ListPortInfo) -> str:
+    logger.debug(f"device: {device}, vid={device.vid}, pid={device.pid}, name={device.name}, manufacturer={device.manufacturer}, device={device.device}, description={device.description}, product={device.product}, usb_info={device.usb_info()}")
     return next(
         (
             t.name
@@ -142,6 +143,7 @@ def get_portinfos() -> list[str]:
 
 def get_VNA(iface: Interface) -> VNA:
     # serial_port.timeout = TIMEOUT
+    logger.debug(f"get_VNA({iface.comment})")
     return NAME2DEVICE[iface.comment](iface)
 
 
@@ -187,6 +189,7 @@ def detect_version(serial_port: serial.Serial) -> str:
         sleep(0.05)
 
         data = serial_port.read(128).decode("ascii")
+        logger.debug(f"DETECT VERSION: '{data}'")
         if data.startswith("ch> "):
             return "v1"
         # -H versions
